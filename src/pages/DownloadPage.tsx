@@ -10,10 +10,12 @@ import {
   Plus,
   X,
   ExternalLink,
+  Sparkles,
 } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
 import { VideoInfo, VideoFormat } from "../types";
 import { getVideoInfo } from "../api/video";
+import VideoSummary from "../components/VideoSummary";
 
 export default function DownloadPage() {
   const [searchParams] = useSearchParams();
@@ -63,11 +65,11 @@ export default function DownloadPage() {
 
     try {
       const info = await getVideoInfo(validUrls[0]);
-      
+
       if (!info.formats || info.formats.length === 0) {
-        throw new Error('该视频暂不支持下载');
+        throw new Error("该视频暂不支持下载");
       }
-      
+
       setVideoInfo(info);
       setSelectedFormat(info.formats[0]);
     } catch (err) {
@@ -124,12 +126,15 @@ export default function DownloadPage() {
 
           if (eventData.startsWith("data: ")) {
             const jsonStr = eventData.substring(6).trim();
-            
+
             if (jsonStr && jsonStr.startsWith("{")) {
               try {
                 const progress = JSON.parse(jsonStr);
 
-                if (progress.status === "downloading" || progress.status === "processing") {
+                if (
+                  progress.status === "downloading" ||
+                  progress.status === "processing"
+                ) {
                   setDownloadProgress(progress.progress);
                 } else if (progress.status === "completed") {
                   setDownloadProgress(100);
@@ -175,7 +180,7 @@ export default function DownloadPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 pt-24 pb-16">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">
             视频下载中心
@@ -248,96 +253,122 @@ export default function DownloadPage() {
         </div>
 
         {videoInfo && (
-          <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 mb-8">
-            <div className="flex flex-col md:flex-row gap-6">
-              <img
-                src={videoInfo.thumbnail}
-                alt={videoInfo.title}
-                className="w-full md:w-48 h-32 md:h-auto object-cover rounded-xl"
-              />
-              <div className="flex-1">
-                <h3 className="text-white font-semibold text-lg mb-2">
-                  {videoInfo.title}
-                </h3>
-                <div className="flex items-center gap-4 text-gray-400 text-sm">
-                  <span className="flex items-center gap-1">
-                    <Clock className="w-4 h-4" />
-                    {videoInfo.duration}
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <Files className="w-4 h-4" />
-                    {selectedFormat?.size}
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-6">
-              <h4 className="text-white font-semibold mb-4 flex items-center gap-2">
-                <ChevronDown className="w-5 h-5" />
-                选择格式和画质
-              </h4>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                {videoInfo.formats.map((format) => (
-                  <button
-                    key={format.id}
-                    onClick={() => setSelectedFormat(format)}
-                    className={`p-4 rounded-xl border transition-all ${
-                      selectedFormat?.id === format.id
-                        ? "border-primary-500 bg-primary-500/20"
-                        : "border-white/20 bg-white/5 hover:bg-white/10"
-                    }`}
-                  >
-                    <div className="text-white font-semibold">
-                      {format.resolution}
-                    </div>
-                    <div className="text-gray-400 text-sm">{format.size}</div>
-                    <div className="text-gray-500 text-xs uppercase">
-                      {format.ext}
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {downloadUrl ? (
-              <button
-                onClick={handleDirectDownload}
-                className="mt-6 w-full btn-primary flex items-center justify-center gap-2"
-              >
-                <ExternalLink className="w-5 h-5" />
-                点击下载
-              </button>
-            ) : (
-              <button
-                onClick={handleDownload}
-                disabled={isDownloading}
-                className="mt-6 w-full btn-primary flex items-center justify-center gap-2"
-              >
-                {isDownloading ? (
-                  <>
-                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    下载中 {Math.round(downloadProgress)}%
-                  </>
-                ) : (
-                  <>
-                    <Download className="w-5 h-5" />
-                    立即下载
-                  </>
-                )}
-              </button>
-            )}
-
-            {isDownloading && (
-              <div className="mt-4">
-                <div className="h-2 bg-white/10 rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-gradient-primary transition-all duration-300"
-                    style={{ width: `${downloadProgress}%` }}
+          <div className="grid grid-cols-1 lg:grid-cols-[2fr_3fr] gap-8 mb-8">
+            {/* 左侧：视频信息和下载部分 */}
+            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6">
+              <div className="flex flex-col gap-6">
+                <div className="flex flex-col md:flex-row gap-6">
+                  <img
+                    src={videoInfo.thumbnail}
+                    alt={videoInfo.title}
+                    className="w-full md:w-48 h-32 md:h-auto object-cover rounded-xl"
                   />
+                  <div className="flex-1">
+                    <h3 className="text-white font-semibold text-lg mb-2">
+                      {videoInfo.title}
+                    </h3>
+                    <div className="flex items-center gap-4 text-gray-400 text-sm">
+                      <span className="flex items-center gap-1">
+                        <Clock className="w-4 h-4" />
+                        {videoInfo.duration}
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <Files className="w-4 h-4" />
+                        {selectedFormat?.size}
+                      </span>
+                    </div>
+                  </div>
                 </div>
+
+                <div>
+                  <h4 className="text-white font-semibold mb-4 flex items-center gap-2">
+                    <ChevronDown className="w-5 h-5" />
+                    选择格式和画质
+                  </h4>
+                  <div className="grid grid-cols-2 gap-3">
+                    {videoInfo.formats.map((format) => (
+                      <button
+                        key={format.id}
+                        onClick={() => setSelectedFormat(format)}
+                        className={`p-4 rounded-xl border transition-all ${
+                          selectedFormat?.id === format.id
+                            ? "border-primary-500 bg-primary-500/20"
+                            : "border-white/20 bg-white/5 hover:bg-white/10"
+                        }`}
+                      >
+                        <div className="text-white font-semibold">
+                          {format.resolution}
+                        </div>
+                        <div className="text-gray-400 text-sm">
+                          {format.size}
+                        </div>
+                        <div className="text-gray-500 text-xs uppercase">
+                          {format.ext}
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {downloadUrl ? (
+                  <button
+                    onClick={handleDirectDownload}
+                    className="w-full btn-primary flex items-center justify-center gap-2"
+                  >
+                    <ExternalLink className="w-5 h-5" />
+                    点击下载
+                  </button>
+                ) : (
+                  <button
+                    onClick={handleDownload}
+                    disabled={isDownloading}
+                    className="w-full btn-primary flex items-center justify-center gap-2"
+                  >
+                    {isDownloading ? (
+                      <>
+                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        下载中 {Math.round(downloadProgress)}%
+                      </>
+                    ) : (
+                      <>
+                        <Download className="w-5 h-5" />
+                        立即下载
+                      </>
+                    )}
+                  </button>
+                )}
+
+                {isDownloading && (
+                  <div>
+                    <div className="h-2 bg-white/10 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-gradient-primary transition-all duration-300"
+                        style={{ width: `${downloadProgress}%` }}
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
-            )}
+            </div>
+
+            {/* 右侧：AI总结部分 */}
+            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-white font-semibold flex items-center gap-2">
+                  <Sparkles className="w-5 h-5" />
+                  AI 视频总结
+                </h3>
+              </div>
+              <VideoSummary
+                videoUrl={videoInfo.url}
+                videoInfo={{
+                  id: videoInfo.id,
+                  title: videoInfo.title,
+                  duration: videoInfo.duration,
+                  thumbnail: videoInfo.thumbnail,
+                }}
+              />
+            </div>
           </div>
         )}
 

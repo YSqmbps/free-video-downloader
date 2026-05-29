@@ -1,5 +1,14 @@
-import { Download, Globe, Video, Languages, Layers, Smartphone } from 'lucide-react';
-import { features } from '../data/platforms';
+import {
+  Download,
+  Globe,
+  Video,
+  Languages,
+  Layers,
+  Smartphone,
+  Sparkles,
+  MessageSquare,
+} from "lucide-react";
+import { features } from "../data/platforms";
 
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   download: Download,
@@ -8,6 +17,8 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   translate: Languages,
   batch: Layers,
   mobile: Smartphone,
+  summary: Sparkles,
+  chat: MessageSquare,
 };
 
 export default function Features() {

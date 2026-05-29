@@ -40,3 +40,14 @@ export interface Platform {
   icon: string;
   url: string;
 }
+
+export interface VideoSummary {
+  title: string;
+  duration: string;
+  thumbnail: string;
+  outline: string[];
+  keyPoints: string[];
+  content: string;
+}
+
+export type SummaryMode = 'brief' | 'detailed' | 'outline';

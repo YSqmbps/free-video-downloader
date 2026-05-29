@@ -17,6 +17,17 @@ export interface VideoFormat {
   ext: string;
 }
 
+export interface VideoSummary {
+  title: string;
+  duration: string;
+  thumbnail: string;
+  outline: string[];
+  keyPoints: string[];
+  content: string;
+}
+
+export type SummaryMode = 'brief' | 'detailed' | 'outline';
+
 export async function getVideoInfo(url: string): Promise<VideoInfo> {
   const response = await fetch(`${API_BASE_URL}/info`, {
     method: 'POST',
@@ -33,6 +44,24 @@ export async function getVideoInfo(url: string): Promise<VideoInfo> {
   }
   
   return data.info;
+}
+
+export async function getVideoSummary(url: string, mode: SummaryMode = 'detailed'): Promise<VideoSummary> {
+  const response = await fetch(`${API_BASE_URL}/summary`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ url, mode }),
+  });
+  
+  const data = await response.json();
+  
+  if (!data.success) {
+    throw new Error(data.error || '获取视频总结失败');
+  }
+  
+  return data.summary;
 }
 
 export function formatDuration(seconds: number): string {

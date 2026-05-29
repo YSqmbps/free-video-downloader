@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
-import { Download, Menu, X, Zap } from 'lucide-react';
-import { Link, useLocation } from 'react-router-dom';
+import { useState, useEffect } from "react";
+import { Download, Menu, X, Zap } from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -11,24 +11,27 @@ export default function Header() {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
     };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const navLinks = [
-    { name: '首页', href: '/' },
-    { name: '下载', href: '/download' },
-    { name: '会员', href: '/pricing' },
-    { name: '教程', href: '/guide' },
-    { name: '关于', href: '/about' },
+    { name: "首页", href: "/" },
+    { name: "下载", href: "/download" },
+    { name: "视频总结", href: "/summary" },
+    { name: "会员", href: "/pricing" },
+    { name: "教程", href: "/guide" },
+    { name: "关于", href: "/about" },
   ];
+
+  const isLightPage = ["/guide", "/about"].includes(location.pathname);
 
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled
-          ? 'bg-white/95 backdrop-blur-md shadow-lg'
-          : 'bg-transparent'
+        isScrolled || isLightPage
+          ? "bg-white/95 backdrop-blur-md shadow-lg"
+          : "bg-transparent"
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -39,7 +42,7 @@ export default function Header() {
             </div>
             <span
               className={`text-xl font-bold ${
-                isScrolled ? 'text-gray-900' : 'text-white'
+                isScrolled || isLightPage ? "text-gray-900" : "text-white"
               }`}
             >
               视频下载器
@@ -47,21 +50,27 @@ export default function Header() {
           </Link>
 
           <nav className="hidden md:flex items-center gap-8">
-            {navLinks.map((link) => (
-              <Link
-                key={link.name}
-                to={link.href}
-                className={`font-medium transition-colors hover:text-primary-500 ${
-                  location.pathname === link.href
-                    ? 'text-primary-600'
-                    : isScrolled
-                    ? 'text-gray-600'
-                    : 'text-white/90'
-                }`}
-              >
-                {link.name}
-              </Link>
-            ))}
+            {navLinks.map((link) => {
+              const isActive = location.pathname === link.href;
+              return (
+                <Link
+                  key={link.name}
+                  to={link.href}
+                  className={`relative font-medium transition-all duration-300 ${
+                    isActive
+                      ? "text-primary-600"
+                      : isScrolled || isLightPage
+                        ? "text-gray-600 hover:text-primary-500"
+                        : "text-white/90 hover:text-white"
+                  }`}
+                >
+                  {link.name}
+                  {isActive && (
+                    <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-primary rounded-full" />
+                  )}
+                </Link>
+              );
+            })}
           </nav>
 
           <div className="hidden md:flex items-center gap-4">
@@ -80,11 +89,11 @@ export default function Header() {
           >
             {isMobileMenuOpen ? (
               <X
-                className={`w-6 h-6 ${isScrolled ? 'text-gray-900' : 'text-white'}`}
+                className={`w-6 h-6 ${isScrolled ? "text-gray-900" : "text-white"}`}
               />
             ) : (
               <Menu
-                className={`w-6 h-6 ${isScrolled ? 'text-gray-900' : 'text-white'}`}
+                className={`w-6 h-6 ${isScrolled ? "text-gray-900" : "text-white"}`}
               />
             )}
           </button>
@@ -100,8 +109,8 @@ export default function Header() {
                   onClick={() => setIsMobileMenuOpen(false)}
                   className={`px-4 py-3 rounded-xl font-medium transition-colors ${
                     location.pathname === link.href
-                      ? 'bg-primary-50 text-primary-600'
-                      : 'text-gray-600 hover:bg-gray-50'
+                      ? "bg-primary-50 text-primary-600"
+                      : "text-gray-600 hover:bg-gray-50"
                   }`}
                 >
                   {link.name}

@@ -82,18 +82,18 @@ export const features = [
     description: '支持4K/8K超清画质下载，保留原始视频质量',
   },
   {
+    icon: 'summary',
+    title: 'AI视频总结',
+    description: '智能分析视频内容，自动生成大纲、核心要点和详细总结',
+  },
+  {
     icon: 'translate',
     title: '字幕翻译',
     description: '自动识别字幕并翻译为多种语言，学习更轻松',
   },
   {
-    icon: 'batch',
-    title: '批量下载',
-    description: '一键添加多个视频链接，批量处理省时省力',
-  },
-  {
-    icon: 'mobile',
-    title: '移动端支持',
-    description: '完美适配手机和平板，随时随地下载视频',
+    icon: 'chat',
+    title: 'AI对话',
+    description: '与AI对话提问，深入理解视频内容，获取个性化解答',
   },
 ];
